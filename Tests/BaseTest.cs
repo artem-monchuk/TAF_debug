@@ -26,6 +26,26 @@ namespace Framework.Tests
             _browser = browser;
         }
 
+        //OneTimeSetUp attribute to explicitly create artifact folders, including in CI/CD runner
+        [OneTimeSetUp]
+        public void OneTimeSetup()
+        {
+            //create artifact folders once per class
+            EnsureArtifactFoldersExist();
+        }
+
+        private void EnsureArtifactFoldersExist()
+        {
+            string logsDir = "Logs";
+            string screenshotsDir = "Screenshots";
+
+            if (!Directory.Exists(logsDir))
+                Directory.CreateDirectory(logsDir);
+
+            if (!Directory.Exists(screenshotsDir))
+                Directory.CreateDirectory(screenshotsDir);
+        }
+
         protected const int DEFAULT_TIMEOUT = 10;
         protected const int EXTENDED_TIMEOUT = 30;
         protected const int SHORT_TIMEOUT = 5;
