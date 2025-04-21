@@ -8,7 +8,5 @@
     },
     "Api": {
         "BaseUrl": "https://jsonplaceholder.typicode.com"
-    },
-    //added for CI/CD ??
-    "TestDataPath": "Data/TestData.json"
+    }
 }
