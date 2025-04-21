@@ -1,0 +1,29 @@
+name: Pipeline
+
+on:
+  pull_request: #trigger on pull requests to the branch
+    branches:
+      - main
+  schedule: #trigger by schedule at midnight
+    - cron: "0 0 * * *"
+  workflow_dispatch: #manually trigger the workflow
+
+jobs:
+  test-suite:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0' 
+
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Run API Tests
+        run: dotnet test --filter "Category=API" --logger "trx;LogFileName=api-tests.trx"
+        continue-on-error: true #UI tests still run even if API tests fail
