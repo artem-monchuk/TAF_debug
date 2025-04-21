@@ -1,0 +1,14 @@
+﻿{
+    "Browsers": [ "chrome", "firefox", "edge" ],
+    "Headless": true,
+    "ConfigureDownload": true,
+    "Logging": {
+        "MinLogLevel": "Information",
+        "LogFilePath": "Logs/test_log_{0}.txt"
+    },
+    "Api": {
+        "BaseUrl": "https://jsonplaceholder.typicode.com"
+    },
+    //added for CI/CD ??
+    "TestDataPath": "Data/TestData.json"
+}
