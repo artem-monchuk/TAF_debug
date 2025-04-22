@@ -111,12 +111,7 @@ namespace Framework.Tests
             Directory.CreateDirectory(screenshotsDir); // ensures it exists
         
             string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            string testName = TestContext.CurrentContext.Test.Name;
-
-            foreach (char c in Path.GetInvalidFileNameChars())
-            {
-                testName = testName.Replace(c, '_');
-            }
+            string testName = SanitizeFileName(TestContext.CurrentContext.Test.Name);
         
             string filePath = Path.Combine(screenshotsDir, $"{testName}_{timestamp}.png");
         
@@ -124,6 +119,18 @@ namespace Framework.Tests
             File.WriteAllBytes(filePath, screenshot.AsByteArray);
         
             Logger.LogError($"Screenshot saved: {filePath}");
+        }
+
+        private string SanitizeFileName(string rawTestName)
+        {
+            var invalidChars = new HashSet<char>(Path.GetInvalidFileNameChars())
+            {
+                '"', ':', '*', '?', '<', '>', '|', '\\', '/'
+            };
+        
+            string sanitizedTestName = string.Concat(rawTestName.Where(c => !invalidChars.Contains(c)));
+        
+            return sanitizedTestName;
         }
 
         private string GetProjectRootDirectory()
