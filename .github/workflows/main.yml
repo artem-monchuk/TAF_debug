@@ -79,18 +79,21 @@ jobs:
         run: dotnet test --filter "Category!=API" --logger "trx;LogFileName=ui-tests.trx"
 
       - name: Upload UI Test Results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ui-test-results
           path: TestResults/ui-tests.trx
 
       - name: Upload API Test Results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: api-test-results
           path: TestResults/api-tests.trx
 
       - name: Upload Screenshots (if any)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: screenshots
