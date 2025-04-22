@@ -35,7 +35,14 @@ jobs:
         run: |
           pwd
           ls -R . # List files and directories recursively
-      
+
+      - name: Install Google Chrome
+        run: |
+          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable  
+          
       - name: Install browser dependencies
         run: |
           sudo apt-get update
@@ -43,7 +50,13 @@ jobs:
           
           #install Chrome Driver, Firefox Driver, Edge Driver dynamically based on input
           if [[ "${{ github.event.inputs.browser }}" == "chrome" ]]; then
-            wget https://chromedriver.storage.googleapis.com/135.0.3179.52/chromedriver_linux64.zip
+            CHROME_VERSION=$(google-chrome --version | sed 's/[a-zA-Z ]*//g' | cut -d '.' -f 1)
+            echo "Detected Chrome major version: $CHROME_VERSION"
+            DRIVER_URL="https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION"
+            CHROMEDRIVER_VERSION=$(curl -s $DRIVER_URL)
+            echo "Installing ChromeDriver version $CHROMEDRIVER_VERSION"
+            
+            wget "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
             unzip chromedriver_linux64.zip
             sudo mv chromedriver /usr/local/bin/
             sudo chmod +x /usr/local/bin/chromedriver
