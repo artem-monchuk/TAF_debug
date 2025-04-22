@@ -30,42 +30,21 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0' 
-      
-      - name: Debug File Path
-        run: |
-          pwd
-          ls -R . # List files and directories recursively
 
-      - name: Install browser dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          if [[ "${{ github.event.inputs.browser }}" == "chrome" ]]; then
-            CHROME_VERSION=$(google-chrome --version | sed 's/Google Chrome //g' | cut -d '.' -f 1)
-            echo "Detected Chrome major version: $CHROME_VERSION"
-            
-            DRIVER_URL="https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION"
-            CHROMEDRIVER_VERSION=$(curl -s $DRIVER_URL)
-            echo "Installing ChromeDriver version $CHROMEDRIVER_VERSION"
-            
-            wget "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
-            unzip chromedriver_linux64.zip
-            sudo mv chromedriver /usr/local/bin/
-            sudo chmod +x /usr/local/bin/chromedriver
-          elif [[ "${{ github.event.inputs.browser }}" == "firefox" ]]; then
-            wget https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux64.tar.gz
-            tar -xvzf geckodriver-v0.30.0-linux64.tar.gz
-            sudo mv geckodriver /usr/local/bin/
-            sudo chmod +x /usr/local/bin/geckodriver
-          elif [[ "${{ github.event.inputs.browser }}" == "edge" ]]; then
-            wget https://msedgedriver.azureedge.net/114.0.1823.43/msedgedriver-linux64.zip
-            unzip msedgedriver-linux64.zip
-            sudo mv msedgedriver /usr/local/bin/
-            sudo chmod +x /usr/local/bin/msedgedriver
-          fi
+      - name: Install Chrome dependencies 
+        run: | 
+          sudo apt-get update 
+          sudo apt-get install -y wget unzip xvfb libxi6 libgconf-2-4 
+          sudo apt-get install -y google-chrome-stable 
+          google-chrome --version 
+          which google-chrome  
 
       - name: Restore dependencies
         run: dotnet restore
+
+      - name: Build 
+        run: dotnet build --no-restore 
+        working-directory: .
 
       - name: Run API Tests
         run: dotnet test --filter "Category=API" --logger "trx;LogFileName=api-tests.trx"
