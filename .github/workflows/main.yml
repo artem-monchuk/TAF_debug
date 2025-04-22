@@ -97,4 +97,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: screenshots
-          path: ./TAF_debug/Screenshots/
+          path: ./TAF_debug/TAF_debug/bin/Debug/net8.0/Screenshots/
