@@ -35,12 +35,43 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wget unzip xvfb libxi6
-          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
-          google-chrome --version
-          which google-chrome 
+          
+          if [ "${{ github.event.inputs.browser }}" == "chrome" ]; then
+            # Install Chrome dependencies (as working currently)
+            echo "Installing dependencies for Chrome..."
+            wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+            echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+            sudo apt-get update
+            sudo apt-get install -y google-chrome-stable
+            google-chrome --version
+            which google-chrome
+
+          elif [ "${{ github.event.inputs.browser }}" == "firefox" ]; then
+            # Install Firefox dependencies
+            echo "Installing dependencies for Firefox..."
+            sudo apt-get install -y firefox
+            firefox --version
+            which firefox
+            wget https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux64.tar.gz
+            tar -xvzf geckodriver-v0.30.0-linux64.tar.gz
+            sudo mv geckodriver /usr/local/bin/
+            sudo chmod +x /usr/local/bin/geckodriver
+
+          elif [ "${{ github.event.inputs.browser }}" == "edge" ]; then
+            # Install Edge dependencies
+            echo "Installing dependencies for Edge..."
+            wget -q -O - https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+            sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/
+            sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-stable.list'
+            sudo apt-get update
+            sudo apt-get install -y microsoft-edge-stable
+            microsoft-edge --version
+            which microsoft-edge
+            wget https://msedgedriver.azureedge.net/114.0.1823.43/msedgedriver-linux64.zip
+            unzip msedgedriver-linux64.zip
+            sudo mv msedgedriver /usr/local/bin/
+            sudo chmod +x /usr/local/bin/msedgedriver
+          fi 
 
       - name: Restore dependencies
         run: dotnet restore
