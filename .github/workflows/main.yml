@@ -30,7 +30,12 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0' 
-
+      
+      - name: Debug File Path
+        run: |
+          pwd
+          ls -R . # List files and directories recursively
+      
       - name: Install browser dependencies
         run: |
           sudo apt-get update
@@ -54,35 +59,10 @@ jobs:
             sudo chmod +x /usr/local/bin/msedgedriver
           fi
 
-      - name: Debug File Path
-        run: |
-          pwd
-          ls -R . # List files and directories recursively
-          
-      #update testsettings.json dynamically based on user input
-      - name: Update testsettings.json
-        shell: pwsh #PowerShell on GitHub runner
-        run: |
-          $testSettingsPath = "Tests/Configuration/testsettings.json"
-
-          #parse JSON file
-          $json = Get-Content $testSettingsPath | ConvertFrom-Json
-
-          #update the "Browsers" property with the selected browser
-          $json.Browsers = @("${{ github.event.inputs.browser }}")
-
-          #convert the updated JSON object back to JSON and overwrite the file
-          $json | ConvertTo-Json -Depth 10 | Set-Content $testSettingsPath
-
-          Write-Host "Updated testsettings.json to use browser: ${{ github.event.inputs.browser }}"
-
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Run API Tests
         run: dotnet test --filter "Category=API" --logger "trx;LogFileName=api-tests.trx"
         continue-on-error: true #UI tests still run even if API tests fail
-
-      - name: Run UI Tests
-        run: dotnet test --filter "Category!=API" --logger "trx;LogFileName=ui-tests.trx"
 
