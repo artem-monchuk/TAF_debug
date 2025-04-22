@@ -54,6 +54,11 @@ jobs:
             sudo chmod +x /usr/local/bin/msedgedriver
           fi
 
+      - name: Debug File Path
+        run: |
+          pwd
+          ls -R . # List files and directories recursively
+          
       #update testsettings.json dynamically based on user input
       - name: Update testsettings.json
         shell: pwsh #PowerShell on GitHub runner
