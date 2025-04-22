@@ -36,22 +36,14 @@ jobs:
           pwd
           ls -R . # List files and directories recursively
 
-      - name: Install Google Chrome
-        run: |
-          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable  
-          
       - name: Install browser dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y wget unzip
-          
-          #install Chrome Driver, Firefox Driver, Edge Driver dynamically based on input
           if [[ "${{ github.event.inputs.browser }}" == "chrome" ]]; then
-            CHROME_VERSION=$(google-chrome --version | sed 's/[a-zA-Z ]*//g' | cut -d '.' -f 1)
+            CHROME_VERSION=$(google-chrome --version | sed 's/Google Chrome //g' | cut -d '.' -f 1)
             echo "Detected Chrome major version: $CHROME_VERSION"
+            
             DRIVER_URL="https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION"
             CHROMEDRIVER_VERSION=$(curl -s $DRIVER_URL)
             echo "Installing ChromeDriver version $CHROMEDRIVER_VERSION"
@@ -66,7 +58,7 @@ jobs:
             sudo mv geckodriver /usr/local/bin/
             sudo chmod +x /usr/local/bin/geckodriver
           elif [[ "${{ github.event.inputs.browser }}" == "edge" ]]; then
-            wget https://msedgedriver.azureedge.net/135.0.3179.54/msedgedriver-linux64.zip
+            wget https://msedgedriver.azureedge.net/114.0.1823.43/msedgedriver-linux64.zip
             unzip msedgedriver-linux64.zip
             sudo mv msedgedriver /usr/local/bin/
             sudo chmod +x /usr/local/bin/msedgedriver
@@ -77,8 +69,7 @@ jobs:
 
       - name: Run API Tests
         run: dotnet test --filter "Category=API" --logger "trx;LogFileName=api-tests.trx"
-        continue-on-error: true #UI tests still run even if API tests fail
+        continue-on-error: true
 
       - name: Run UI Tests
         run: dotnet test --filter "Category!=API" --logger "trx;LogFileName=ui-tests.trx"
-
