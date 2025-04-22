@@ -66,11 +66,13 @@ jobs:
             sudo apt-get install -y microsoft-edge-stable
             microsoft-edge --version
 
-            EDGE_VERSION=$(microsoft-edge --version | sed 's/Microsoft Edge //' | cut -d '.' -f 1)
+            EDGE_VERSION=$(microsoft-edge --version | sed 's/Microsoft Edge //' | cut -d ' ' -f1)
+            echo "Detected Edge version: $EDGE_VERSION"
             DRIVER_URL="https://msedgedriver.azureedge.net/LATEST_RELEASE_$EDGE_VERSION"
             MSEDGEDRIVER_VERSION=$(curl -s $DRIVER_URL | tr -d '\r\n')
-            wget "https://msedgedriver.azureedge.net/$MSEDGEDRIVER_VERSION/msedgedriver-linux64.zip"
-            unzip msedgedriver-linux64.zip
+            echo "Fetched msedgedriver version: $MSEDGEDRIVER_VERSION"
+            wget "https://msedgedriver.azureedge.net/$MSEDGEDRIVER_VERSION/edgedriver_linux64.zip"
+            unzip edgedriver_linux64.zip
             sudo mv msedgedriver /usr/local/bin/
             sudo chmod +x /usr/local/bin/msedgedriver
           fi
