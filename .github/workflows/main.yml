@@ -107,18 +107,20 @@ jobs:
       - name: Run UI Tests
         run: dotnet test --filter "Category!=API" --logger "trx;LogFileName=ui-tests.trx"
 
-      - name: Upload Test Results (UI)
+      - name: Debug Artifact Generation
+        run: |
+          echo "Checking artifact directories and contents..."
+          echo "Logs directory:"
+          ls -la Logs || echo "Logs directory does not exist."
+          echo "Screenshots directory:"
+          ls -la Screenshots || echo "Screenshots directory does not exist."
+          
+      - name: Upload Logs
         uses: actions/upload-artifact@v3
         with:
-          name: ui-test-results
-          path: TestResults/ui-tests.trx
-      
-      - name: Upload Test Results (API)
-        uses: actions/upload-artifact@v3
-        with:
-          name: api-test-results
-          path: TestResults/api-tests.trx
-      
+          name: logs
+          path: Logs/
+          
       - name: Upload Screenshots (if any)
         uses: actions/upload-artifact@v3
         with:
