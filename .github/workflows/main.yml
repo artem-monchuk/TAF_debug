@@ -41,22 +41,29 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y wget unzip
           
-          #install Chrome Driver, Firefox Driver, Edge Driver dynamically based on input
+      #install Chrome Driver, Firefox Driver, Edge Driver dynamically based on input
+      - name: Install Browser Drivers Dynamically
+        run: |
           if [[ "${{ github.event.inputs.browser }}" == "chrome" ]]; then
-            wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
+            echo "Fetching latest ChromeDriver..."
+            CHROME_VERSION=$(google-chrome --version | grep -oP "\d+\.\d+\.\d+" | head -1) # Get installed Chrome version
+            CHROME_MAJOR_VERSION=$(echo $CHROME_VERSION | cut -d. -f1) # Extract major version (e.g., 115)
+            DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_MAJOR_VERSION}")
+            wget "https://chromedriver.storage.googleapis.com/${DRIVER_VERSION}/chromedriver_linux64.zip"
             unzip chromedriver_linux64.zip
             sudo mv chromedriver /usr/local/bin/
-            sudo chmod +x /usr/local/bin/chromedriver
           elif [[ "${{ github.event.inputs.browser }}" == "firefox" ]]; then
-            wget https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux64.tar.gz
-            tar -xvzf geckodriver-v0.30.0-linux64.tar.gz
+            echo "Fetching latest GeckoDriver..."
+            DRIVER_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | jq -r ".tag_name" | sed 's/^v//')
+            wget "https://github.com/mozilla/geckodriver/releases/download/v${DRIVER_VERSION}/geckodriver-v${DRIVER_VERSION}-linux64.tar.gz"
+            tar -xvzf geckodriver-v${DRIVER_VERSION}-linux64.tar.gz
             sudo mv geckodriver /usr/local/bin/
-            sudo chmod +x /usr/local/bin/geckodriver
           elif [[ "${{ github.event.inputs.browser }}" == "edge" ]]; then
-            wget https://msedgedriver.azureedge.net/114.0.5735.90/msedgedriver-linux64.zip
+            echo "Fetching latest EdgeDriver..."
+            DRIVER_VERSION=$(curl -s https://msedgedriver.azureedge.net/LATEST_STABLE) # Get the latest stable version
+            wget "https://msedgedriver.azureedge.net/${DRIVER_VERSION}/msedgedriver-linux64.zip"
             unzip msedgedriver-linux64.zip
             sudo mv msedgedriver /usr/local/bin/
-            sudo chmod +x /usr/local/bin/msedgedriver
           fi
 
       - name: Restore dependencies
