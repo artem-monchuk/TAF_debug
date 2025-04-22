@@ -58,20 +58,36 @@ jobs:
             sudo chmod +x /usr/local/bin/geckodriver
 
           elif [ "${{ github.event.inputs.browser }}" == "edge" ]; then
-            # Install Edge dependencies
             echo "Installing dependencies for Edge..."
             wget -q -O - https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
             sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/
             sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-stable.list'
             sudo apt-get update
+
+            #install Microsoft Edge stable
             sudo apt-get install -y microsoft-edge-stable
             microsoft-edge --version
             which microsoft-edge
-            wget https://msedgedriver.azureedge.net/114.0.1823.43/msedgedriver-linux64.zip
+
+            #fetch the major version of the installed Edge browser
+            EDGE_VERSION=$(microsoft-edge --version | sed 's/Microsoft Edge //' | cut -d '.' -f 1)
+            echo "Detected Microsoft Edge major version: $EDGE_VERSION"
+            
+            #fetch the corresponding WebDriver version
+            DRIVER_URL="https://msedgedriver.azureedge.net/LATEST_RELEASE_$EDGE_VERSION"
+            MSEDGEDRIVER_VERSION=$(curl -s $DRIVER_URL || echo "NOT_FOUND")
+
+            if [ "$MSEDGEDRIVER_VERSION" == "NOT_FOUND" ]; then
+              echo "Failed to locate Edge WebDriver for version $EDGE_VERSION."
+              exit 1
+            fi
+
+            echo "Installing msedgedriver version $MSEDGEDRIVER_VERSION"
+            wget "https://msedgedriver.azureedge.net/$MSEDGEDRIVER_VERSION/msedgedriver-linux64.zip"
             unzip msedgedriver-linux64.zip
             sudo mv msedgedriver /usr/local/bin/
             sudo chmod +x /usr/local/bin/msedgedriver
-          fi 
+          fi
 
       - name: Restore dependencies
         run: dotnet restore
