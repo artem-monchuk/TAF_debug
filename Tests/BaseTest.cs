@@ -36,12 +36,14 @@ namespace Framework.Tests
 
         private void EnsureArtifactFoldersExist()
         {
-            string logsDir = "Logs";
-            string screenshotsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Screenshots");
-
+            string workDir = TestContext.CurrentContext.WorkDirectory;
+        
+            string logsDir = Path.Combine(workDir, "Logs");
+            string screenshotsDir = Path.Combine(workDir, "Screenshots");
+        
             if (!Directory.Exists(logsDir))
                 Directory.CreateDirectory(logsDir);
-
+        
             if (!Directory.Exists(screenshotsDir))
                 Directory.CreateDirectory(screenshotsDir);
         }
@@ -107,18 +109,19 @@ namespace Framework.Tests
 
         private void CaptureScreenshot()
         {
-            string screenshotsDir = "Screenshots";
+            string workDir = TestContext.CurrentContext.WorkDirectory;
+            string screenshotsDir = Path.Combine(workDir, "Screenshots");
+        
             Directory.CreateDirectory(screenshotsDir);
-
+        
             string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             string testName = TestContext.CurrentContext.Test.Name;
-  
-            //assign file path to a variable
+        
             string filePath = Path.Combine(screenshotsDir, $"{testName}_{timestamp}.png");
-
+        
             Screenshot screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
             File.WriteAllBytes(filePath, screenshot.AsByteArray);
-
+        
             Logger.LogError($"Screenshot saved: {filePath}");
         }
     }
