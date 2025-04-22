@@ -18,6 +18,10 @@ on:
           - firefox
           - edge
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   test-suite:
     runs-on: ubuntu-latest
@@ -85,19 +89,19 @@ jobs:
         run: dotnet test --filter "Category!=API" --logger "trx;LogFileName=ui-tests.trx"
 
       - name: Upload UI Test Results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: ui-test-results
           path: TestResults/ui-tests.trx
 
       - name: Upload API Test Results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: api-test-results
           path: TestResults/api-tests.trx
 
       - name: Upload Screenshots (if any)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: screenshots
           path: Screenshots/
