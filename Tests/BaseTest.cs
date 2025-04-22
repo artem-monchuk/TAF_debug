@@ -36,12 +36,12 @@ namespace Framework.Tests
 
         private void EnsureArtifactFoldersExist()
         {
-            string logsDir = Path.Combine(Directory.GetCurrentDirectory(), "Logs");
-            string screenshotsDir = Path.Combine(Directory.GetCurrentDirectory(), "Screenshots");
-
+            string logsDir = Path.Combine(GetProjectRootDirectory(), "Logs");
+            string screenshotsDir = Path.Combine(GetProjectRootDirectory(), "Screenshots");
+        
             if (!Directory.Exists(logsDir))
                 Directory.CreateDirectory(logsDir);
-
+        
             if (!Directory.Exists(screenshotsDir))
                 Directory.CreateDirectory(screenshotsDir);
         }
@@ -107,17 +107,32 @@ namespace Framework.Tests
 
         private void CaptureScreenshot()
         {
-            string screenshotsDir = Path.Combine(Directory.GetCurrentDirectory(), "Screenshots");
-            Directory.CreateDirectory(screenshotsDir);
-
+            string screenshotsDir = Path.Combine(GetProjectRootDirectory(), "Screenshots");
+            Directory.CreateDirectory(screenshotsDir); // ensures it exists
+        
             string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             string testName = TestContext.CurrentContext.Test.Name;
+        
             string filePath = Path.Combine(screenshotsDir, $"{testName}_{timestamp}.png");
-
+        
             Screenshot screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
             File.WriteAllBytes(filePath, screenshot.AsByteArray);
-
+        
             Logger.LogError($"Screenshot saved: {filePath}");
+        }
+
+        private string GetProjectRootDirectory()
+        {
+            var dir = AppContext.BaseDirectory;
+            while (Directory.GetParent(dir) != null)
+            {
+                if (Directory.EnumerateFiles(dir, "*.sln").Any() || Directory.Exists(Path.Combine(dir, ".git")))
+                    return dir;
+        
+                dir = Directory.GetParent(dir)!.FullName;
+            }
+        
+            throw new DirectoryNotFoundException("Could not determine project root directory.");
         }
     }
 }
