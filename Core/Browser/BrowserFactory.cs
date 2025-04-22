@@ -31,7 +31,8 @@ namespace Framework.Core.Browser
             if (headless)
             {
                 options.AddArgument("--headless");
-                //options.AddArgument("--window-size=1920,1080");
+                options.AddArgument("--window-size=1920,1080");
+                options.AddArgument("--disable-gpu");
             }
 
             if (configureDownload)
