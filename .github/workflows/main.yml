@@ -40,15 +40,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y wget unzip xvfb libxi6
 
-      - name: Set up selected browser
+      - name: Set up chrome browser
         if: ${{ github.event.inputs.browser == 'chrome' }}
         uses: browser-actions/setup-chrome@v1
 
-      - name: Set up selected browser
+      - name: Set up firefox browser
         if: ${{ github.event.inputs.browser == 'firefox' }}
         uses: browser-actions/setup-firefox@v1
 
-      - name: Set up selected browser
+      - name: Set up edge browser
         if: ${{ github.event.inputs.browser == 'edge' }}
         uses: browser-actions/setup-edge@v1
 
