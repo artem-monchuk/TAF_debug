@@ -43,7 +43,7 @@ jobs:
           
           #install Chrome Driver, Firefox Driver, Edge Driver dynamically based on input
           if [[ "${{ github.event.inputs.browser }}" == "chrome" ]]; then
-            wget https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
+            wget https://chromedriver.storage.googleapis.com/135.0.3179.52/chromedriver_linux64.zip
             unzip chromedriver_linux64.zip
             sudo mv chromedriver /usr/local/bin/
             sudo chmod +x /usr/local/bin/chromedriver
