@@ -37,7 +37,7 @@ namespace Framework.Tests
         private void EnsureArtifactFoldersExist()
         {
             string logsDir = "Logs";
-            string screenshotsDir = "Screenshots";
+            string screenshotsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Screenshots");
 
             if (!Directory.Exists(logsDir))
                 Directory.CreateDirectory(logsDir);
