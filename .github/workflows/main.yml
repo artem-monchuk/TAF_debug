@@ -37,7 +37,7 @@ jobs:
           sudo apt-get install -y wget unzip xvfb libxi6
           
           if [ "${{ github.event.inputs.browser }}" == "chrome" ]; then
-            # Install Chrome dependencies (as working currently)
+            #install Chrome dependencies
             echo "Installing dependencies for Chrome..."
             wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
             echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
@@ -47,7 +47,7 @@ jobs:
             which google-chrome
 
           elif [ "${{ github.event.inputs.browser }}" == "firefox" ]; then
-            # Install Firefox dependencies
+            #install Firefox dependencies
             echo "Installing dependencies for Firefox..."
             sudo apt-get install -y firefox
             firefox --version
