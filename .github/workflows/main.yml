@@ -116,13 +116,13 @@ jobs:
           ls -la Screenshots || echo "Screenshots directory does not exist."
           
       - name: Upload Logs
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v2
         with:
           name: logs
           path: Logs/
           
       - name: Upload Screenshots (if any)
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v2
         with:
           name: screenshots
           path: Screenshots/
