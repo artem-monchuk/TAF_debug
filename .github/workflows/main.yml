@@ -58,7 +58,7 @@ jobs:
       - name: Update testsettings.json
         shell: pwsh #PowerShell on GitHub runner
         run: |
-          $testSettingsPath = "Configuration/testsettings.json"
+          $testSettingsPath = "Tests/Configuration/testsettings.json"
 
           #parse JSON file
           $json = Get-Content $testSettingsPath | ConvertFrom-Json
