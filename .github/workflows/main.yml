@@ -53,7 +53,7 @@ jobs:
             sudo mv geckodriver /usr/local/bin/
             sudo chmod +x /usr/local/bin/geckodriver
           elif [[ "${{ github.event.inputs.browser }}" == "edge" ]]; then
-            wget https://msedgedriver.azureedge.net/134.0.3124.119/msedgedriver-linux64.zip
+            wget https://msedgedriver.azureedge.net/134.0.3124.93/msedgedriver-linux64.zip
             unzip msedgedriver-linux64.zip
             sudo mv msedgedriver /usr/local/bin/
             sudo chmod +x /usr/local/bin/msedgedriver
