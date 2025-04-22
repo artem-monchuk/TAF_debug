@@ -66,3 +66,6 @@ jobs:
         run: dotnet test --filter "Category=API" --logger "trx;LogFileName=api-tests.trx"
         continue-on-error: true #UI tests still run even if API tests fail
 
+      - name: Run UI Tests
+        run: dotnet test --filter "Category!=API" --logger "trx;LogFileName=ui-tests.trx"
+
