@@ -112,6 +112,11 @@ namespace Framework.Tests
         
             string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             string testName = TestContext.CurrentContext.Test.Name;
+
+            foreach (char c in Path.GetInvalidFileNameChars())
+            {
+                testName = testName.Replace(c, '_');
+            }
         
             string filePath = Path.Combine(screenshotsDir, $"{testName}_{timestamp}.png");
         
